@@ -1,1 +1,15 @@
-<router-outlet></router-outlet>
+<mat-sidenav-container>
+  <!-- sidenav with local reference -->
+  <mat-sidenav role="navigation" #sidenav>
+    <!-- sidenav list that is listening for custom event to toggle the sidenav -->
+    <app-sidenav-list (closeSidenav)="sidenav.close()"></app-sidenav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <!-- header that is listening for custom event to toggle the sidenav-->
+    <app-header (sidenavToggle)="sidenav.toggle()"></app-header>
+    <!-- app content via router -->
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

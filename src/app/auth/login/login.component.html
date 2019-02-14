@@ -1,11 +1,11 @@
-<!-- using reactive forms approach -->
+<!-- using template driven approach -->
 <section>
   <form 
     fxLayout="column"
     fxLayoutAlign="center center"
     fxLayoutGap="10px"
-    [formGroup]="loginForm"
-    (ngSubmit)="onSubmit()"
+    #f="ngForm"
+    (ngSubmit)="onSubmit(f)"
   >
     <!-- email input -->
     <mat-form-field>
@@ -13,10 +13,14 @@
         type="email" 
         matInput
         placeholder="Email"
-        formControlName="email"
+        ngModel
+        name="email"
+        email
+        required
+        #emailInput="ngModel"
       >
       <!-- email hint and error message -->
-      <mat-hint>Please enter your email.</mat-hint>
+      <mat-hint *ngIf="emailInput.invalid">Please enter your email.</mat-hint>
       <mat-error>Invalid or misssing email.</mat-error>
     </mat-form-field>
     <!-- password input -->
@@ -25,10 +29,14 @@
         type="password" 
         matInput
         placeholder="Password"
-        formControlName="password"
+        ngModel
+        name="password"
+        required
+        minlength="6"
+        #pwInput="ngModel"
       >
       <!-- password hint and error message -->
-      <mat-hint>Please enter your password.</mat-hint>
+      <mat-hint *ngIf="pwInput.invalid">Please enter your password.</mat-hint>
       <mat-error>Invalid or missing password.</mat-error>
     </mat-form-field>
     <!-- submit button -->
@@ -36,7 +44,7 @@
       type="submit"
       mat-raised-button
       color="primary"
-      [disabled]="loginForm.invalid"
+      [disabled]="f.invalid"
     >
       Log In
     </button>

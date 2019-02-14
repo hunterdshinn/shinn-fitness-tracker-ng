@@ -1,0 +1,10 @@
+/* sidenav styling to fix height */
+/* also have to change global height of body and html to 100% */
+mat-sidenav-container, mat-sidenav-content, mat-sidenav {
+  height: 100%;
+}
+
+/* setting the width of the sidenav */
+mat-sidenav {
+  width: 250px;
+}
