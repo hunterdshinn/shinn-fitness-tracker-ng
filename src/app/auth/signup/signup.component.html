@@ -1,5 +1,5 @@
 <!-- using template driven approach -->
-<section>
+<section class="signup-form">
   <form 
     fxLayout="column" 
     fxLayoutAlign="center center" 
@@ -63,7 +63,7 @@
       ngModel 
       name="agree" 
       required
-      color="primary"
+      color="accent"
     >
       Agree to Terms and Conditions.
     </mat-checkbox>
@@ -71,7 +71,7 @@
     <button 
       type="submit" 
       mat-raised-button 
-      color="primary"
+      color="accent"
       [disabled]="f.invalid"
     >
       Sign Up

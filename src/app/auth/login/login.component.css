@@ -2,3 +2,7 @@
 mat-form-field {
   width: 300px;
 }
+
+.login-form {
+  padding: 30px;
+}
