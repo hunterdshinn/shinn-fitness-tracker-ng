@@ -1,8 +1,9 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
 // import for our dialog modal component
 import { StopTrainingComponent } from './stop-training.component'
+import { TrainingService } from '../training.service';
 
 @Component({
   selector: 'app-current-training',
@@ -10,14 +11,12 @@ import { StopTrainingComponent } from './stop-training.component'
   styleUrls: ['./current-training.component.css']
 })
 export class CurrentTrainingComponent implements OnInit {
-  // event emitter to exit training after user confirmation via modal
-  @Output() trainingExit = new EventEmitter()
   // initial current training progress
   progress = 0;
   // property to store interval 
   timer;
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private dialog: MatDialog, private trainingService: TrainingService) { }
 
   ngOnInit() {
     // timer initialization
@@ -26,15 +25,20 @@ export class CurrentTrainingComponent implements OnInit {
 
   // method to start or resume timer
   startOrResumeTimer() {
+    // getting the duration of the selected exercise
+    const step = this.trainingService.getRunningExercise().duration / 100 * 1000
+
     // interval for increasing the current training progress
     this.timer = setInterval(() => {
-      this.progress = this.progress + 5
+      this.progress = this.progress + 1
 
       // stopping the interval once progress reaches 100%
       if (this.progress >= 100) {
+        // call method for completion
+        this.trainingService.completeExercise()
         clearInterval(this.timer)
       }
-    }, 1000)
+    }, step)
   }
 
   // method for stop button click
@@ -52,7 +56,8 @@ export class CurrentTrainingComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       // the result is the boolean being passed from which button is pressed in the modal
       if (result) {
-        this.trainingExit.emit()
+        // call method for cancellation
+        this.trainingService.cancelExercise(this.progress)
       } else {
         this.startOrResumeTimer()
       }
