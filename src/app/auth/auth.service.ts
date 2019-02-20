@@ -1,70 +1,82 @@
 import { Subject } from 'rxjs/Subject'
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from './user.model';
+import { AngularFireAuth } from 'angularfire2/auth';
 import { AuthData } from './auth-data.model';
+import { TrainingService } from '../training/training.service';
 
 @Injectable()
 export class AuthService {
   // event emitter using Subject for authChanges
   authChange = new Subject<boolean>()
-  // stores the current user
-  private user: User;
+  // stores whether or not the user is authenticated
+  private isAuthenticated = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router, 
+    private angularFireAuth: AngularFireAuth,
+    private trainingService: TrainingService
+  ) {}
+
+  // method to listen for authState changes, and perform appropriate actions
+  initAuthListener() {
+    this.angularFireAuth.authState
+      .subscribe((user) => {
+        if (user) {
+          // set isAuthenticated to true
+          this.isAuthenticated = true
+          // emit that the auth status has changed to true
+          this.authChange.next(true)
+          // redirect the user
+          this.router.navigate(['/training'])
+        } else {
+          // cancel subscriptions to db
+          this.trainingService.cancelSubscriptions()
+          // emit that the auth status has changed to false
+          this.authChange.next(false)
+          // redirect the user
+          this.router.navigate(['/login'])
+          // set isAuthenticated to false
+          this.isAuthenticated = false
+        }
+      })
+  }
 
   // method to be called when the user signs up --> receiving the sign up data
   registerUser(authData: AuthData) {
-    // for now, just initializing the user with the sign up data and a fake userId
-    this.user = {
-      email: authData.email,
-      userId: Math.round(Math.random() * 10000).toString()
-    }
-    // perform succesful auth actions
-    this.authSuccess()
+    // create a user off of angularFireAuth
+    this.angularFireAuth.auth
+      .createUserWithEmailAndPassword(authData.email, authData.password)
+      .then((result) => {
+        // console.log(result)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   // method to be called when the user logs in --> receiving the log in data
   login(authData: AuthData) {
-    // for now, just initializing the user with the log in data and a fake userId
-    this.user = {
-      email: authData.email,
-      userId: Math.round(Math.random() * 10000).toString()
-    }
-    // perform successful auth actions
-    this.authSuccess()
+    // log a user in off of angularFireAuth
+    this.angularFireAuth.auth
+      .signInWithEmailAndPassword(authData.email, authData.password)
+      .then((result) => {
+        // console.log(result)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   // method to be called when the user logs out 
   logout() {
-    // for now, just sets the user property to null
-    this.user = null
-
-    // emit that the auth status has changed to false
-    this.authChange.next(false)
-
-    // redirect the user
-    this.router.navigate(['/login'])
-  }
-
-  // method with abstracted duplicate code for auth success
-  authSuccess() {
-    // emit that the auth status has changed to true
-    this.authChange.next(true)
-
-    // redirect the user
-    this.router.navigate(['/training'])
-  }
-
-  // method to get the current user data
-  getUser() {
-    // using spread operator to create a new object with the same properties as the user property
-    return { ...this.user }
+    // sign out using angularFire
+    this.angularFireAuth.auth.signOut()
   }
 
   // method to see whether or not there is a user
   isAuth() {
-    return this.user != null
+    return this.isAuthenticated
   }
 
 }

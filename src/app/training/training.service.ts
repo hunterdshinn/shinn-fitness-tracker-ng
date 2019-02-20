@@ -1,8 +1,9 @@
-import { Subject } from 'rxjs/Subject'
 import { Injectable } from '@angular/core';
-import { Exercise } from './exercise.model';
-import { AngularFirestore } from 'angularfire2/firestore';
+import { Subject } from 'rxjs/Subject'
+import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { Exercise } from './exercise.model';
 
 @Injectable()
 export class TrainingService {
@@ -16,12 +17,15 @@ export class TrainingService {
   private availableExercises: Exercise[] = []
   // property to store the selected exercise 
   private runningExercise: Exercise
+  // property to store the Firebase subscriptions
+  private fbSubs: Subscription[] = []
 
   constructor(private db: AngularFirestore){ }
 
   // method to retrieve the exersices from the db
   fetchAvailableExercises() {
-    this.db
+    this.fbSubs.push(
+      this.db
       .collection('availableExercises')
       .snapshotChanges()
       .pipe(map((docArray) => {
@@ -40,7 +44,7 @@ export class TrainingService {
         this.availableExercises = exercises
         // triggering the event emitter to pass the exercises after storing them from the db
         this.exercisesChanged.next([...this.availableExercises])
-      })
+      }))
   }
 
   // method to be called to set the runningExercise property 
@@ -87,12 +91,20 @@ export class TrainingService {
 
   // method to fetch finished exercises data from db
   fetchCompletedOrCanceledExercises() {
-    this.db.collection('finishedExercises')
+    this.fbSubs.push(
+      this.db.collection('finishedExercises')
       .valueChanges()
       .subscribe((exercises: Exercise[]) => {
         // emit the finishedExercises from the db
         this.finishedExercisesChanged.next(exercises)
-      })
+      }))
+  }
+
+  // method to cancel all subscriptions to db
+  cancelSubscriptions() {
+    this.fbSubs.forEach((subscription) => {
+      subscription.unsubscribe()
+    })
   }
 
   // method to save data to db
