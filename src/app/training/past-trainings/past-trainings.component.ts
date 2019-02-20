@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { Subscription } from 'rxjs';
 import { Exercise } from '../exercise.model';
 import { TrainingService } from '../training.service';
 
@@ -8,11 +9,13 @@ import { TrainingService } from '../training.service';
   templateUrl: './past-trainings.component.html',
   styleUrls: ['./past-trainings.component.css']
 })
-export class PastTrainingsComponent implements OnInit, AfterViewInit {
+export class PastTrainingsComponent implements OnInit, AfterViewInit, OnDestroy {
   // columns to be rendered
   displayedColumns = ['date', 'name', 'duration', 'calories', 'state']
   // defining the dataSource 
   dataSource = new MatTableDataSource<Exercise>()
+  // property to store finishedExercisesChanged subscription
+  private finExChangedSubscription: Subscription;
 
   // getting access to the matSort directive from the template
   @ViewChild(MatSort) sort: MatSort;
@@ -22,8 +25,13 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit {
   constructor(private trainingService: TrainingService) { }
 
   ngOnInit() {
+    // subscribe to the finishedExercisesChanged subject
+    this.finExChangedSubscription = this.trainingService.finishedExercisesChanged
+      .subscribe((exercises: Exercise[]) => {
+        this.dataSource.data = exercises
+      })
     // populate the dataSource
-    this.dataSource.data = this.trainingService.getCompletedOrCanceledExercises()
+    this.trainingService.fetchCompletedOrCanceledExercises()
   }
 
   ngAfterViewInit() {
@@ -36,6 +44,11 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit {
   // method for filtering the dataSource
   doFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase()
+  }
+
+  ngOnDestroy() {
+    // unsubscribing
+    this.finExChangedSubscription.unsubscribe()
   }
 
 }

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { TrainingService } from '../training.service';
 import { Exercise } from '../exercise.model';
 
@@ -8,15 +9,21 @@ import { Exercise } from '../exercise.model';
   templateUrl: './new-training.component.html',
   styleUrls: ['./new-training.component.css']
 })
-export class NewTrainingComponent implements OnInit {
+export class NewTrainingComponent implements OnInit, OnDestroy {
   // initial available exercises property to be pulled in from the trainingService
-  exercises: Exercise[] = []
+  exercises: Exercise[];
+  // subscription for exercisesChanged subject
+  exerciseSubscription: Subscription;
 
   constructor(private trainingService: TrainingService) { }
 
   ngOnInit() {
-    // setting the exercises property off of a copy of the available exercises from the trainingService
-    this.exercises = this.trainingService.getAvailableExercises()
+    // getting available exercises from populating event in trainingService
+    this.exerciseSubscription = this.trainingService.exercisesChanged
+      .subscribe((exercises) => {
+        this.exercises = exercises
+      })
+    this.trainingService.fetchAvailableExercises()
   }
 
   onStartTraining(form: NgForm) {
@@ -24,4 +31,8 @@ export class NewTrainingComponent implements OnInit {
     this.trainingService.startExercise(form.value.exercise)
   }
 
+  ngOnDestroy() {
+    // unsubscribing 
+    this.exerciseSubscription.unsubscribe()
+  }
 }
