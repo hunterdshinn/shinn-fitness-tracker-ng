@@ -3,6 +3,7 @@ import { Subject } from 'rxjs/Subject'
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFireAuth } from 'angularfire2/auth';
 import { Exercise } from './exercise.model';
 
 @Injectable()
@@ -20,7 +21,7 @@ export class TrainingService {
   // property to store the Firebase subscriptions
   private fbSubs: Subscription[] = []
 
-  constructor(private db: AngularFirestore){ }
+  constructor(private db: AngularFirestore, private angularFireAuth: AngularFireAuth){ }
 
   // method to retrieve the exersices from the db
   fetchAvailableExercises() {
@@ -58,7 +59,12 @@ export class TrainingService {
   // method to be called when an exercise is completed
   completeExercise() {
     // call the addDataToDatabase method and pass it the exercise object
-    this.addDataToDatabase({ ...this.runningExercise, date: new Date(), state: 'completed'})
+    this.addDataToDatabase({ 
+      ...this.runningExercise, 
+      date: new Date(), 
+      state: 'completed',
+      uid: this.angularFireAuth.auth.currentUser.uid
+    })
 
     // clear the runningExercise
     this.runningExercise =  null
@@ -74,7 +80,8 @@ export class TrainingService {
       duration: this.runningExercise.duration * (progress / 100),
       calories: this.runningExercise.calories * (progress / 100),
       date: new Date(),
-      state: 'canceled'
+      state: 'canceled',
+      uid: this.angularFireAuth.auth.currentUser.uid
     })
 
     // clear the runningExercise
@@ -91,8 +98,11 @@ export class TrainingService {
 
   // method to fetch finished exercises data from db
   fetchCompletedOrCanceledExercises() {
+    // current user's uid
+    const loggedInUserId = this.angularFireAuth.auth.currentUser.uid
+
     this.fbSubs.push(
-      this.db.collection('finishedExercises')
+      this.db.collection('finishedExercises', ref => ref.where('uid', '==', loggedInUserId))
       .valueChanges()
       .subscribe((exercises: Exercise[]) => {
         // emit the finishedExercises from the db
