@@ -40,13 +40,16 @@
       <mat-error>Invalid or missing password.</mat-error>
     </mat-form-field>
     <!-- submit button -->
-    <button 
+    <button
+      *ngIf="!isLoading" 
       type="submit"
       mat-raised-button
-      color="accent"
+      color="primary"
       [disabled]="f.invalid"
     >
       Log In
     </button>
+    <!-- loading spinner -->
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
   </form>
 </section>

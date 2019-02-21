@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Exercise } from './exercise.model';
+import { UIService } from '../shared/ui.service';
 
 @Injectable()
 export class TrainingService {
@@ -21,10 +22,17 @@ export class TrainingService {
   // property to store the Firebase subscriptions
   private fbSubs: Subscription[] = []
 
-  constructor(private db: AngularFirestore, private angularFireAuth: AngularFireAuth){ }
+  constructor(
+    private db: AngularFirestore, 
+    private angularFireAuth: AngularFireAuth,
+    private uiService: UIService
+  ){ }
 
   // method to retrieve the exersices from the db
   fetchAvailableExercises() {
+    // set loading state to true
+    this.uiService.loadingStateChanged.next(true)
+
     this.fbSubs.push(
       this.db
       .collection('availableExercises')
@@ -41,10 +49,19 @@ export class TrainingService {
         })
       }))
       .subscribe((exercises: Exercise[]) => {
+        // set loading state to false
+        this.uiService.loadingStateChanged.next(false)
         // populating the availableExercises array off the exercises from the db
         this.availableExercises = exercises
         // triggering the event emitter to pass the exercises after storing them from the db
         this.exercisesChanged.next([...this.availableExercises])
+      }, (error) => {
+        // set loading state to false
+        this.uiService.loadingStateChanged.next(false)
+        // error message if exercises fail to load 
+        this.uiService.showSnackBar('Failed to load exercises, please try again.', null, 3000)
+        // set exercisesChanged to null to show a refresh option to user in template
+        this.exercisesChanged.next(null)
       }))
   }
 
