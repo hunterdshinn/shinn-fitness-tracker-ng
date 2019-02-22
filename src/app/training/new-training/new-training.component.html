@@ -13,11 +13,11 @@
           </mat-select>
         </mat-form-field>
         <!-- loading spinner -->
-        <mat-spinner *ngIf="isLoading"></mat-spinner>
+        <mat-spinner *ngIf="isLoading" color="accent"></mat-spinner>
       </mat-card-content>
       <mat-card-actions fxLayoutAlign="center" *ngIf="!isLoading">
         <!-- start exercise button -->
-        <button *ngIf="exercises" type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Start</button>
+        <button *ngIf="exercises" type="submit" mat-raised-button color="accent" [disabled]="f.invalid">Start</button>
         <!-- reload exercises button -->
         <button *ngIf="!exercises" type="button" mat-raised-button color="accent" (click)="fetchExercises()">Load Exercises</button>
       </mat-card-actions>
