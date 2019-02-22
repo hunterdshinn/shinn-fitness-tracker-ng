@@ -11,11 +11,9 @@
     <mat-icon>fitness_center</mat-icon>
     <span class="nav-caption">Training</span>
   </a>
-  <mat-list-item (click)="onLogout()">
-    <!-- making font size the same as with mat-list-item -->
-    <button mat-icon-button style="font-size: 16px;" *ngIf="isAuth">
-      <mat-icon>eject</mat-icon>
-      <span class="nav-caption">Log Out</span>
-    </button>
-  </mat-list-item>
+  <a mat-list-item (click)="onLogout()" *ngIf="isAuth">
+    <mat-icon>eject</mat-icon>
+    <span class="nav-caption">Log Out</span>
+  </a>
 </mat-nav-list>
+
