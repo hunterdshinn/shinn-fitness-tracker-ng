@@ -5,11 +5,13 @@ import { MAT_DIALOG_DATA } from '@angular/material'
 @Component({
   selector: 'app-stop-training',
   template: `
-  <h1 mat-dialog-title>Stop session?</h1>
-  <mat-dialog-content>
+  <h1 mat-dialog-title>
+    Stop {{ passedData.name | lowercase }} exercise?
+  </h1>
+  <mat-dialog-content fxLayoutAlign="center center">
     <p>You are {{ passedData.progress }}% done.</p>
   </mat-dialog-content>
-  <mat-dialog-actions>
+  <mat-dialog-actions fxLayoutAlign="center center">
     <button mat-button [mat-dialog-close]="true">Yes</button>
     <button mat-button [mat-dialog-close]="false">No</button>
   </mat-dialog-actions>

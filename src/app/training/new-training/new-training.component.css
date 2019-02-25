@@ -1,3 +1,14 @@
 .new-training {
   padding: 30px;
 }
+
+.responsive-button {
+  width: 30%;
+}
+
+@media (max-width: 600px) {
+  /* increase button size on sm devices */
+  .responsive-button {
+    width: 100%;
+  }
+}

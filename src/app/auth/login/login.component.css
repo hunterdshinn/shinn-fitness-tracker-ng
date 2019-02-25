@@ -6,3 +6,14 @@ mat-form-field {
 .login-form {
   padding: 30px;
 }
+
+.responsive-button {
+  width: 25%;
+}
+
+@media (max-width: 600px) {
+  /* increase button size on sm devices */
+  .responsive-button {
+    width: 80%;
+  }
+}

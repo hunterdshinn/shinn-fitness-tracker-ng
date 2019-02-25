@@ -15,12 +15,15 @@ export class CurrentTrainingComponent implements OnInit {
   progress = 0;
   // property to store interval 
   timer;
+  name = '';
 
   constructor(private dialog: MatDialog, private trainingService: TrainingService) { }
 
   ngOnInit() {
     // timer initialization
     this.startOrResumeTimer()
+
+    this.name = this.trainingService.getRunningExercise().name
   }
 
   // method to start or resume timer
@@ -48,7 +51,8 @@ export class CurrentTrainingComponent implements OnInit {
     // dialog modal to confirm from user -- passing in our dialog modal component and config object for data
     const dialogRef = this.dialog.open(StopTrainingComponent, {
       data: {
-        progress: this.progress
+        progress: this.progress,
+        name: this.name
       }
     })
 
