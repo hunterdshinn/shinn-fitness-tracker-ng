@@ -8,7 +8,7 @@ mat-form-field {
 }
 
 .responsive-button {
-  width: 25%;
+  width: 120px;
 }
 
 @media (max-width: 600px) {
