@@ -1,10 +1,11 @@
 <section class="new-training" fxLayout fxLayoutAlign="center">
   <form (ngSubmit)="onStartTraining(f)" #f="ngForm">
     <mat-card fxFlex.xs="100%" fxFlex="400px">
-      <mat-card-title fxLayoutAlign="center">Start a New Exercise</mat-card-title>
-      <mat-card-subtitle fxLayoutAlign="center" style="margin-top: 4px;">
-        <img src="../../../assets/img/timer.png" alt="" style="width: 64px; height: 64px;">
-      </mat-card-subtitle>
+      <!-- <mat-card-title fxLayoutAlign="center">Start a New Exercise</mat-card-title> -->
+      <mat-card-header fxLayoutAlign="center center">
+        <mat-card-title>Start a New Exercise</mat-card-title>
+        <img mat-card-avatar src="../../../assets/img/timer.png" alt="timer">
+      </mat-card-header>
       <mat-card-content fxLayoutAlign="center">
         <!-- selection for exercises -->
         <mat-form-field *ngIf="!isLoading && exercises">

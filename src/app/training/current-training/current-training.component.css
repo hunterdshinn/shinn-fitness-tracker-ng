@@ -3,12 +3,6 @@
 }
 
 .responsive-button {
-  width: 10%;
+  width: 120px;
 }
 
-@media (max-width: 600px) {
-  /* increase button size on small devices */
-  .responsive-button {
-    width: 75%;
-  }
-}
