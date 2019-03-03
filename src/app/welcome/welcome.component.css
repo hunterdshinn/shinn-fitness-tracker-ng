@@ -1,3 +1,21 @@
-.welcome {
+/* flexbox container for cards */
+.wc-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+}
+
+/* styling for cards */
+.welcome-card {
   text-align: center;
+  width: 100%;
+}
+
+/* responsive features */
+@media (min-width: 960px) {
+  .wc-container {
+    flex-direction: row;
+  }
 }

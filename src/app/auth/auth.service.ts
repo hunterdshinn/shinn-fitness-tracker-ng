@@ -36,8 +36,8 @@ export class AuthService {
           this.trainingService.cancelSubscriptions()
           // emit that the auth status has changed to false
           this.authChange.next(false)
-          // redirect the user
-          this.router.navigate(['/login'])
+          // redirect the user (optionally to login, currently removed so that welcome screen shows initially)
+          // this.router.navigate(['/login'])
           // set isAuthenticated to false
           this.isAuthenticated = false
         }
