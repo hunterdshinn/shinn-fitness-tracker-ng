@@ -1,3 +1,14 @@
+/* welcome banner container */
+.banner-container {
+  margin: 30px 0px 30px 0px;
+}
+
+/* welcome banner card */
+.banner-card {
+  text-align: center;
+  padding: 30px;
+}
+
 /* flexbox container for cards */
 .wc-container {
   display: flex;
